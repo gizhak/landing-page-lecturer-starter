@@ -9,8 +9,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, var(--gray1) 0%, white 100%);
+    background: var(--clr-bg);
     padding: 4rem 2rem;
+    transition: background 0.3s ease;
 }
 
 .hero-content {
@@ -25,7 +26,8 @@
     object-fit: cover;
     margin-bottom: 2rem;
     box-shadow: var(--shadow-lg);
-    border: 5px solid white;
+    border: 5px solid var(--clr-card);
+    transition: border-color 0.3s ease;
 }
 
 .hero-content h1 {
@@ -52,7 +54,8 @@
 /* About Section */
 .about-section {
     padding: 5rem 0;
-    background: white;
+    background: var(--clr-bg);
+    transition: background-color 0.3s ease;
 }
 
 .about-section h2 {

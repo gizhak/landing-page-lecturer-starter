@@ -14,11 +14,17 @@
         }
 
         .admin-section {
-            background: white;
+            background: var(--clr-card);
             padding: 2rem;
             margin-bottom: 2rem;
             border-radius: 12px;
             box-shadow: var(--shadow-md);
+            transition: background-color 0.3s ease;
+            border: 1px solid transparent;
+        }
+
+        [data-theme="dark"] .admin-section {
+            border-color: #2a2a2a;
         }
 
         .admin-section h2 {
@@ -100,6 +106,17 @@
     <header class="app-header">
         <div class="header-container">
             <div class="logo">Admin Panel</div>
+
+            <div class="header-controls">
+                <label class="theme-switch" title="החלף מצב תצוגה">
+                    <input type="checkbox" id="theme-toggle">
+                    <span class="slider"></span>
+                </label>
+                <button class="lang-toggle" id="lang-toggle" aria-label="Toggle language" title="החלף שפה">
+                    EN
+                </button>
+            </div>
+
             <nav class="nav-menu">
                 <button onclick="onResetData()" style="background: #e74c3c; color: white;">איפוס נתונים</button>
                 <button onclick="window.location.href='index.html'">חזרה לאתר</button>
@@ -142,10 +159,10 @@
 
         <!-- Products Section -->
         <section class="admin-section">
-            <h2>ניהול מוצרים</h2>
+            <h2>ניהול קורסים</h2>
             <form id="product-form">
                 <div class="form-group">
-                    <label>שם המוצר</label>
+                    <label>שם הקורס</label>
                     <input type="text" id="product-name" required>
                 </div>
                 <div class="form-group">
@@ -160,19 +177,19 @@
                     <label>תכונות (מופרד בפסיקים)</label>
                     <textarea id="product-features" placeholder="תכונה 1, תכונה 2, תכונה 3"></textarea>
                 </div>
-                <button type="submit" class="btn">הוסף מוצר</button>
+                <button type="submit" class="btn">הוסף קורס</button>
             </form>
 
-            <h3 style="margin-top: 2rem; margin-bottom: 1rem;">מוצרים קיימים</h3>
+            <h3 style="margin-top: 2rem; margin-bottom: 1rem;">קורסים קיימים</h3>
             <ul class="item-list" id="products-list"></ul>
         </section>
 
         <!-- Testimonials Section -->
         <section class="admin-section">
-            <h2>ניהול המלצות</h2>
+            <h2>ניהול המלצות סטודנטים</h2>
             <form id="testimonial-form">
                 <div class="form-group">
-                    <label>שם הלקוח</label>
+                    <label>שם הסטודנט</label>
                     <input type="text" id="testimonial-name" required>
                 </div>
                 <div class="form-group">
