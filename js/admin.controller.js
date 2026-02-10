@@ -1,10 +1,17 @@
 // Admin Controller - ניהול תוכן דרך CRUD
 import { dataService } from './services/data.service.js'
+import { i18nService } from './services/i18n.service.js'
 
 window.onload = onInit
 
 async function onInit() {
     try {
+        // Initialize theme and language
+        const savedTheme = i18nService.getCurrentTheme()
+        i18nService.setTheme(savedTheme)
+        const savedLang = i18nService.getCurrentLanguage()
+        i18nService.setLanguage(savedLang)
+
         await dataService.initData()
         await loadUserData()
         await loadProducts()
@@ -17,6 +24,22 @@ async function onInit() {
 }
 
 function setupEventListeners() {
+    // Theme toggle
+    const themeToggle = document.getElementById('theme-toggle')
+    if (themeToggle) {
+        themeToggle.addEventListener('change', () => {
+            i18nService.toggleTheme()
+        })
+    }
+
+    // Language toggle
+    const langToggle = document.getElementById('lang-toggle')
+    if (langToggle) {
+        langToggle.addEventListener('click', () => {
+            i18nService.toggleLanguage()
+        })
+    }
+
     // User Form
     document.getElementById('user-form').addEventListener('submit', onSaveUser)
 
@@ -84,7 +107,7 @@ async function loadProducts() {
             </li>
         `).join('')
 
-        listEl.innerHTML = strHTML || '<li>אין מוצרים</li>'
+        listEl.innerHTML = strHTML || '<li>אין קורסים</li>'
     } catch (err) {
         console.error('Error loading products:', err)
     }
@@ -105,7 +128,7 @@ async function onAddProduct(ev) {
         }
 
         await dataService.addProduct(product)
-        flashMsg('המוצר נוסף בהצלחה!')
+        flashMsg('הקורס נוסף בהצלחה!')
 
         // Clear form
         document.getElementById('product-form').reset()
@@ -114,7 +137,7 @@ async function onAddProduct(ev) {
         await loadProducts()
     } catch (err) {
         console.error('Error adding product:', err)
-        flashMsg('שגיאה בהוספת המוצר')
+        flashMsg('שגיאה בהוספת הקורס')
     }
 }
 
@@ -131,7 +154,7 @@ window.onEditProduct = async function (productId) {
         // Change form to edit mode
         const form = document.getElementById('product-form')
         const submitBtn = form.querySelector('button[type=submit]')
-        submitBtn.textContent = 'עדכן מוצר'
+        submitBtn.textContent = 'עדכן קורס'
         submitBtn.onclick = async (ev) => {
             ev.preventDefault()
 
@@ -144,31 +167,31 @@ window.onEditProduct = async function (productId) {
             product.features = features
 
             await dataService.updateProduct(product)
-            flashMsg('המוצר עודכן בהצלחה!')
+            flashMsg('הקורס עודכן בהצלחה!')
 
             // Reset form
             form.reset()
-            submitBtn.textContent = 'הוסף מוצר'
+            submitBtn.textContent = 'הוסף קורס'
             submitBtn.onclick = null
 
             await loadProducts()
         }
     } catch (err) {
         console.error('Error editing product:', err)
-        flashMsg('שגיאה בעריכת המוצר')
+        flashMsg('שגיאה בעריכת הקורס')
     }
 }
 
 window.onDeleteProduct = async function (productId) {
-    if (!confirm('בטוח שברצונך למחוק מוצר זה?')) return
+    if (!confirm('בטוח שברצונך למחוק קורס זה?')) return
 
     try {
         await dataService.removeProduct(productId)
-        flashMsg('המוצר נמחק בהצלחה!')
+        flashMsg('הקורס נמחק בהצלחה!')
         await loadProducts()
     } catch (err) {
         console.error('Error deleting product:', err)
-        flashMsg('שגיאה במחיקת המוצר')
+        flashMsg('שגיאה במחיקת הקורס')
     }
 }
 

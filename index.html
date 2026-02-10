@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Landing Page - דף נחיתה</title>
+    <title>אתר מרצה - דף נחיתה</title>
     <link rel="stylesheet" href="css/main.css">
 </head>
 
@@ -14,6 +14,16 @@
         <div class="header-container">
             <div class="logo" id="brand-name">המותג שלך</div>
 
+            <div class="header-controls">
+                <label class="theme-switch" title="החלף מצב תצוגה">
+                    <input type="checkbox" id="theme-toggle">
+                    <span class="slider"></span>
+                </label>
+                <button class="lang-toggle" id="lang-toggle" aria-label="Toggle language" title="החלף שפה">
+                    EN
+                </button>
+            </div>
+
             <button class="hamburger" id="hamburger" aria-label="Toggle menu">
                 <span></span>
                 <span></span>
@@ -21,10 +31,10 @@
             </button>
 
             <nav class="nav-menu" id="nav-menu">
-                <button data-section="home">דף הבית</button>
-                <button data-section="about">אודות</button>
-                <button data-section="products">מוצרים</button>
-                <button data-section="testimonials">המלצות</button>
+                <button data-section="home" data-i18n="nav.home">דף הבית</button>
+                <button data-section="about" data-i18n="nav.about">אודות</button>
+                <button data-section="products" data-i18n="nav.courses">קורסים</button>
+                <button data-section="testimonials" data-i18n="nav.testimonials">סטודנטים ממליצים</button>
             </nav>
         </div>
     </header>
@@ -44,15 +54,15 @@
         <!-- About Section -->
         <section id="about" class="about-section">
             <div class="container">
-                <h2>אודותיי</h2>
+                <h2 data-i18n="about.title">אודותיי</h2>
                 <div class="about-content">
-                    <p>
-                        כתוב כאן פרטים נוספים על עצמך. הניסיון שלך, התשוקה שלך,
-                        המומחיות שלך, ולמה לקוחות צריכים לבחור בך.
+                    <p data-i18n="about.intro">
+                        כתוב כאן על הרקע המקצועי והאקדמי שלך. הניסיון שלך בהוראה,
+                        תחומי המומחיות שלך, והפילוסופיה שלך בהוראה.
                     </p>
-                    <p>
-                        הוסף פסקאות נוספות כפי הצורך כדי לספר את הסיפור שלך ולבנות אמון
-                        עם לקוחות פוטנציאליים.
+                    <p data-i18n="about.details">
+                        ספר על השכלתך, הקורסים שאתה מלמד, ומה הופך את שיטת ההוראה שלך
+                        לייחודית ואפקטיבית עבור הסטודנטים.
                     </p>
                 </div>
             </div>
@@ -61,7 +71,7 @@
         <!-- Products Section -->
         <section id="products" class="products-section">
             <div class="container">
-                <h2>המוצרים שלנו</h2>
+                <h2 data-i18n="courses.title">הקורסים שלי</h2>
                 <div class="products-grid" id="products-grid">
                     <!-- Products will be loaded here by JavaScript -->
                 </div>
@@ -71,7 +81,7 @@
         <!-- Testimonials Section -->
         <section id="testimonials" class="testimonials-section">
             <div class="container">
-                <h2>מה הלקוחות שלנו אומרים</h2>
+                <h2 data-i18n="testimonials.title">מה הסטודנטים אומרים</h2>
                 <div class="testimonials-grid" id="testimonials-grid">
                     <!-- Testimonials will be loaded here by JavaScript -->
                 </div>
@@ -83,13 +93,13 @@
     <footer class="app-footer">
         <div class="footer-content">
             <div class="footer-contact">
-                <h3>צור קשר</h3>
+                <h3 data-i18n="footer.contact">צור קשר</h3>
                 <a href="" id="phone-link" class="phone-link">
                     📞 <span id="phone-number"></span>
                 </a>
             </div>
             <div class="footer-copyright">
-                <p>&copy; <span id="current-year"></span> כל הזכויות שמורות</p>
+                <p>&copy; <span id="current-year"></span> <span data-i18n="footer.rights">כל הזכויות שמורות</span></p>
             </div>
         </div>
     </footer>

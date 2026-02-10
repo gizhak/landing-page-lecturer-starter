@@ -1,4 +1,4 @@
-// Data Service - ניהול נתונים (משתמש, מוצרים, המלצות)
+// Data Service - ניהול נתונים (מרצה, קורסים, המלצות סטודנטים)
 import { storageService } from './storage.service.js'
 import { utilService } from './util.service.js'
 

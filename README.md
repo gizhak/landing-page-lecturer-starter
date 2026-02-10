@@ -1,6 +1,6 @@
-# 🚀 Landing Page Starter (HTML/CSS/JS)
+# 🎓 Landing Page למרצה (HTML/CSS/JS)
 
-דף נחיתה מודרני עם ארכיטקטורת MVC + Services + CRUD
+אתר נחיתה מודרני למרצה עם ארכיטקטורת MVC + Services + CRUD
 
 ## ✨ תכונות
 
@@ -12,8 +12,8 @@
 - ✅ **Vercel Ready** - מוכן לפריסה ב-Vercel
 - ✅ **Header רספונסיבי** עם תפריט המבורגר
 - ✅ **Hero Section** - סקשן ראשי עם תמונה ותיאור
-- ✅ **Products Section** - CRUD מלא על מוצרים + WhatsApp
-- ✅ **Testimonials Section** - CRUD מלא על המלצות
+- ✅ **Courses Section** - CRUD מלא על קורסים + WhatsApp
+- ✅ **Testimonials Section** - CRUD מלא על המלצות סטודנטים
 - ✅ **עיצוב מודולרי** - CSS מחולק לקבצים
 - ✅ **תמיכה מלאה בעברית** (RTL)
 
@@ -195,23 +195,23 @@ VS Code - Live Server:
 ### 3. שימוש ב-CRUD מקוד
 
 ```javascript
-// הוספת מוצר חדש
+// הוספת קורס חדש
 const newProduct = {
-    name: "מוצר חדש",
+    name: "קורס חדש",
     description: "תיאור",
-    price: "₪499",
+    price: "₪1,499",
     features: ["תכונה 1", "תכונה 2"]
 }
 await dataService.addProduct(newProduct)
 
-// עדכון מוצר
-product.price = "₪599"
+// עדכון קורס
+product.price = "₪1,999"
 await dataService.updateProduct(product)
 
-// מחיקת מוצר
+// מחיקת קורס
 await dataService.removeProduct(productId)
 
-// אותו דבר להמלצות
+// אותו דבר להמלצות סטודנטים
 await dataService.addTestimonial(testimonial)
 await dataService.updateTestimonial(testimonial)
 await dataService.removeTestimonial(testimonialId)
@@ -220,7 +220,7 @@ await dataService.removeTestimonial(testimonialId)
 ## 📱 פיצ'רים
 
 ### שילוב WhatsApp
-לחיצה על מוצר פותחת WhatsApp עם הודעה מוכנה:
+לחיצה על קורס פותחת WhatsApp עם הודעה מוכנה:
 ```javascript
 async function onProductClick(productId) {
     const product = await dataService.getProductById(productId)
@@ -292,26 +292,25 @@ git push origin feature/my-feature
 ### איך להשתמש
 
 1. פתח את `admin.html` בדפדפן
-2. ערוך פרטי משתמש, הוסף/ערוך/מחק מוצרים והמלצות
+2. ערוך פרטי מרצה, הוסף/ערוך/מחק קורסים והמלצות סטודנטים
 3. כל השינויים נשמרים ב-localStorage
 4. חזור ל-`index.html` לראות את השינויים
 
 ### מה אפשר לעשות ב-Admin?
 
-#### עדכון פרטי משתמש
-- שם המותג
-- שם ותפקיד
-- תיאור
+#### עדכון פרטי מרצה
+- שם ותאר
+- תפקיד ותיאור
 - תמונה
 - מספר טלפון
 
-#### ניהול מוצרים (CRUD מלא)
-- **Create**: הוסף מוצר חדש עם שם, תיאור, מחיר ותכונות
-- **Read**: צפה בכל המוצרים
-- **Update**: ערוך מוצר קיים
-- **Delete**: מחק מוצר
+#### ניהול קורסים (CRUD מלא)
+- **Create**: הוסף קורס חדש עם שם, תיאור, מחיר ותכונות
+- **Read**: צפה בכל הקורסים
+- **Update**: ערוך קורס קיים
+- **Delete**: מחק קורס
 
-#### ניהול המלצות (CRUD מלא)  
+#### ניהול המלצות סטודנטים (CRUD מלא)  
 - **Create**: הוסף המלצה חדשה
 - **Read**: צפה בכל ההמלצות
 - **Update**: ערוך המלצה קיימת
@@ -319,7 +318,7 @@ git push origin feature/my-feature
 
 ### דוגמאות קוד
 
-#### הוספת מוצר
+#### הוספת קורס
 ```javascript
 async function onAddProduct(ev) {
     ev.preventDefault()
@@ -336,7 +335,7 @@ async function onAddProduct(ev) {
 }
 ```
 
-#### עדכון מוצר
+#### עדכון קורס
 ```javascript
 async function onEditProduct(productId) {
     const product = await dataService.getProductById(productId)
@@ -345,7 +344,7 @@ async function onEditProduct(productId) {
 }
 ```
 
-#### מחיקת מוצר
+#### מחיקת קורס
 ```javascript
 async function onDeleteProduct(productId) {
     await dataService.removeProduct(productId)
@@ -424,8 +423,8 @@ Made with ❤️ using MVC + Services Architecture
 - ✅ **Header רספונסיבי** עם תפריט המבורגר
 - ✅ **Hero Section** - סקשן ראשי עם תמונה ותיאור
 - ✅ **About Section** - סקשן אודות
-- ✅ **Products Section** - הצגת מוצרים עם שילוב WhatsApp
-- ✅ **Testimonials Section** - המלצות לקוחות
+- ✅ **Courses Section** - הצגת קורסים עם שילוב WhatsApp
+- ✅ **Testimonials Section** - המלצות סטודנטים
 - ✅ **Footer** - עם פרטי יצירת קשר
 - ✅ **עיצוב מודרני ונקי**
 - ✅ **תמיכה מלאה במובייל**
@@ -474,11 +473,11 @@ Made with ❤️ using MVC + Services Architecture
 יש **3 דרך ממשק האדמין (מומלץ!)
 
 היכנס למצב אדמין (`Ctrl+Shift+A` או `?admin=true`) ותוכל:
-- ✏️ לערוך פרטי משתמש/מותג
-- ➕ להוסיף מוצרים חדשים
-- ✏️ לערוך מוצרים קיימים
-- 🗑️ למחוק מוצרים
-- ➕ להוסיף המלצות לקוחות
+- ✏️ לערוך פרטי מרצה
+- ➕ להוסיף קורסים חדשים
+- ✏️ לערוך קורסים קיימים
+- 🗑️ למחוק קורסים
+- ➕ להוסיף המלצות סטודנטים
 - ✏️ לערוך המלצות
 - 🗑️ למחוק המלצות
 - 🔄 לאפס את כל הנתונים
@@ -504,7 +503,7 @@ Made with ❤️ using MVC + Services Architecture
 
 במצב אדמין תוכל:
 - ✏️ **לערוך** את כל התוכן
-- ➕ **להוסיף** מוצרים והמלצות
+- ➕ **להוסיף** קורסים והמלצות סטודנטים
 - 🗑️ **למחוק** פריטים
 - 💾 **השינויים נשמרים ב-LocalStorage**
 ### שיטה 2: עם שרת מקומי (מומלץ)

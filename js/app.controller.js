@@ -1,6 +1,7 @@
 // App Controller - ניהול האפליקציה הראשי
 import { utilService } from './services/util.service.js'
 import { dataService } from './services/data.service.js'
+import { i18nService } from './services/i18n.service.js'
 
 // To make things easier in this project structure 
 // functions that are called from DOM are defined on a global app object
@@ -19,13 +20,29 @@ window.onload = onInit
 
 async function onInit() {
     try {
+        // Initialize theme and language FIRST
+        initThemeAndLanguage()
+
         await dataService.initData()
         await renderApp()
         setupEventListeners()
     } catch (err) {
         console.error('Error initializing app:', err)
-        flashMsg('שגיאה בטעינת הנתונים')
+        const msg = i18nService.getCurrentLanguage() === 'he'
+            ? 'שגיאה בטעינת הנתונים'
+            : 'Error loading data'
+        flashMsg(msg)
     }
+}
+
+function initThemeAndLanguage() {
+    // Initialize theme
+    const savedTheme = i18nService.getCurrentTheme()
+    i18nService.setTheme(savedTheme)
+
+    // Initialize language
+    const savedLang = i18nService.getCurrentLanguage()
+    i18nService.setLanguage(savedLang)
 }
 
 async function renderApp() {
@@ -67,11 +84,11 @@ async function renderProducts() {
                 <ul class="product-features">
                     ${product.features.map(feature => `<li>${feature}</li>`).join('')}
                 </ul>
-                <button class="product-button">הזמן עכשיו</button>
+                <button class="product-button" data-i18n="courses.button">${i18nService.translate('courses.button')}</button>
             </div>
         `).join('')
 
-        productsGrid.innerHTML = strHTML || '<p>אין מוצרים להצגה</p>'
+        productsGrid.innerHTML = strHTML || `<p data-i18n="courses.empty">${i18nService.translate('courses.empty')}</p>`
     } catch (err) {
         console.error('Error rendering products:', err)
     }
@@ -90,7 +107,7 @@ async function renderTestimonials() {
             </div>
         `).join('')
 
-        testimonialsGrid.innerHTML = strHTML || '<p>אין המלצות להצגה</p>'
+        testimonialsGrid.innerHTML = strHTML || `<p data-i18n="testimonials.empty">${i18nService.translate('testimonials.empty')}</p>`
     } catch (err) {
         console.error('Error rendering testimonials:', err)
     }
@@ -106,6 +123,24 @@ function renderFooter() {
 }
 
 function setupEventListeners() {
+    // Theme toggle
+    const themeToggle = document.getElementById('theme-toggle')
+    if (themeToggle) {
+        themeToggle.addEventListener('change', () => {
+            i18nService.toggleTheme()
+        })
+    }
+
+    // Language toggle
+    const langToggle = document.getElementById('lang-toggle')
+    if (langToggle) {
+        langToggle.addEventListener('click', async () => {
+            i18nService.toggleLanguage()
+            // Re-render to update content
+            await renderApp()
+        })
+    }
+
     // Hamburger menu
     const hamburger = document.getElementById('hamburger')
     const navMenu = document.getElementById('nav-menu')
