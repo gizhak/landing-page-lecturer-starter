@@ -1,6 +1,11 @@
 // Admin Controller - ניהול תוכן דרך CRUD
+
 import { dataService } from './services/data.service.js'
 import { i18nService } from './services/i18n.service.js'
+
+import { uploadService } from './services/upload.service.js'
+
+
 
 window.onload = onInit
 
@@ -59,8 +64,22 @@ async function loadUserData() {
         document.getElementById('user-name').value = userData.name
         document.getElementById('user-title').value = userData.title
         document.getElementById('user-description').value = userData.description
-        document.getElementById('user-image').value = userData.image
+        // אסור לשים value ב-input[type=file]!
         document.getElementById('user-phone').value = userData.phone
+
+        // הצג preview של התמונה הנוכחית (אם יש)
+        let preview = document.getElementById('user-image-preview')
+        if (!preview) {
+            preview = document.createElement('img')
+            preview.id = 'user-image-preview'
+            preview.style.maxWidth = '120px'
+            preview.style.display = 'block'
+            preview.style.margin = '10px 0'
+            const fileInput = document.getElementById('user-image')
+            fileInput.parentNode.appendChild(preview)
+        }
+        preview.src = userData.image || ''
+        preview.style.display = userData.image ? 'block' : 'none'
     } catch (err) {
         console.error('Error loading user data:', err)
     }
@@ -70,15 +89,22 @@ async function onSaveUser(ev) {
     ev.preventDefault()
 
     try {
+        const fileInput = document.getElementById('user-image')
+        const file = fileInput.files[0]
+        let imageUrl = null
+        if (file) {
+            imageUrl = await uploadService.uploadImg(file)
+        }
+        let phone = document.getElementById('user-phone').value.trim()
+        if (!phone) phone = '050-0000000' // מספר פקטיבי כברירת מחדל
         const userData = {
             brandName: document.getElementById('brand-name').value,
             name: document.getElementById('user-name').value,
             title: document.getElementById('user-title').value,
             description: document.getElementById('user-description').value,
-            image: document.getElementById('user-image').value,
-            phone: document.getElementById('user-phone').value
+            image: imageUrl || '',
+            phone
         }
-
         await dataService.updateUserData(userData)
         flashMsg('פרטי המשתמש עודכנו בהצלחה!')
     } catch (err) {
@@ -120,11 +146,20 @@ async function onAddProduct(ev) {
         const featuresStr = document.getElementById('product-features').value
         const features = featuresStr.split(',').map(f => f.trim()).filter(f => f)
 
+        // העלאת תמונה ל-Cloudinary
+        const fileInput = document.getElementById('product-image')
+        const file = fileInput.files[0]
+        let imageUrl = ''
+        if (file) {
+            imageUrl = await uploadService.uploadImg(file)
+        }
+
         const product = {
             name: document.getElementById('product-name').value,
             description: document.getElementById('product-desc').value,
             price: document.getElementById('product-price').value,
-            features: features.length > 0 ? features : ['תכונה 1', 'תכונה 2']
+            features: features.length > 0 ? features : ['תכונה 1', 'תכונה 2'],
+            image: imageUrl
         }
 
         await dataService.addProduct(product)
@@ -160,6 +195,13 @@ window.onEditProduct = async function (productId) {
 
             const featuresStr = document.getElementById('product-features').value
             const features = featuresStr.split(',').map(f => f.trim()).filter(f => f)
+
+            // העלאת תמונה חדשה אם נבחרה
+            const fileInput = document.getElementById('product-image')
+            const file = fileInput.files[0]
+            if (file) {
+                product.image = await uploadService.uploadImg(file)
+            }
 
             product.name = document.getElementById('product-name').value
             product.description = document.getElementById('product-desc').value
@@ -225,10 +267,18 @@ async function onAddTestimonial(ev) {
     ev.preventDefault()
 
     try {
+        // העלאת תמונה ל-Cloudinary
+        const fileInput = document.getElementById('testimonial-image')
+        const file = fileInput.files[0]
+        let imageUrl = ''
+        if (file) {
+            imageUrl = await uploadService.uploadImg(file)
+        }
+
         const testimonial = {
             name: document.getElementById('testimonial-name').value,
             text: document.getElementById('testimonial-text').value,
-            image: document.getElementById('testimonial-image').value
+            image: imageUrl
         }
 
         await dataService.addTestimonial(testimonial)
@@ -261,9 +311,15 @@ window.onEditTestimonial = async function (testimonialId) {
         submitBtn.onclick = async (ev) => {
             ev.preventDefault()
 
+            // העלאת תמונה חדשה אם נבחרה
+            const fileInput = document.getElementById('testimonial-image')
+            const file = fileInput.files[0]
+            if (file) {
+                testimonial.image = await uploadService.uploadImg(file)
+            }
+
             testimonial.name = document.getElementById('testimonial-name').value
             testimonial.text = document.getElementById('testimonial-text').value
-            testimonial.image = document.getElementById('testimonial-image').value
 
             await dataService.updateTestimonial(testimonial)
             flashMsg('ההמלצה עודכנה בהצלחה!')
