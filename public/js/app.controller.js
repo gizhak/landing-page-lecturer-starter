@@ -7,6 +7,10 @@ import { i18nService } from './services/i18n.service.js'
 // שנה את הכתובת הזו כדי לקבוע תמונת ברירת מחדל ללקוחות
 const DEFAULT_TESTIMONIAL_IMAGE = 'https://via.placeholder.com/100x100?text=👤'
 
+// מספר הטלפון של המפתח - שנה למספר שלך
+// Developer phone number for "רוצים גם?" link
+const DEV_PHONE = '972501234567'
+
 // To make things easier in this project structure
 // functions that are called from DOM are defined on a global app object
 window.app = {
@@ -134,6 +138,14 @@ function renderFooter() {
         document.getElementById('phone-link').href = `https://wa.me/${phone}?text=${msg}`
     }
     document.getElementById('current-year').textContent = new Date().getFullYear()
+
+    // קישור "רוצים גם?" לוואטסאפ של המפתח
+    const devLink = document.getElementById('dev-link')
+    if (devLink) {
+        const devMsg = encodeURIComponent('אני מעוניין לשמוע עוד על דף נחיתה דומה')
+        devLink.href = `https://wa.me/${DEV_PHONE}?text=${devMsg}`
+        devLink.target = '_blank'
+    }
 }
 
 function setupEventListeners() {

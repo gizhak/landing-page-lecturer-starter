@@ -52,6 +52,18 @@
     color: var(--clr-text-light);
 }
 
+.dev-link {
+    color: var(--clr-secondary);
+    text-decoration: none;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.dev-link:hover {
+    color: var(--clr-primary);
+    text-decoration: underline;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .footer-content {
