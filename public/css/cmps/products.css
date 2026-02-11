@@ -15,9 +15,7 @@
 /* Carousel Wrapper */
 .carousel-wrapper {
     position: relative;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+    overflow: hidden;
 }
 
 .carousel-arrow {
@@ -67,6 +65,7 @@
     scroll-behavior: smooth;
     padding: 0.5rem 0;
     -webkit-overflow-scrolling: touch;
+    touch-action: pan-x;
     /* Hide scrollbar */
     scrollbar-width: none;
     -ms-overflow-style: none;
@@ -174,9 +173,16 @@
         font-size: 2rem;
     }
 
+    .products-grid {
+        justify-content: flex-start;
+        scroll-snap-type: x proximity;
+        padding: 0.5rem 1rem;
+    }
+
     .product-card {
-        min-width: 280px;
-        max-width: 280px;
+        min-width: 85vw;
+        max-width: 85vw;
+        width: 85vw;
     }
 
     .carousel-arrow {
