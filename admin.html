@@ -146,8 +146,8 @@
                     <textarea id="user-description" required></textarea>
                 </div>
                 <div class="form-group">
-                    <label>URL תמונה</label>
-                    <input type="url" id="user-image" required>
+                    <label>תמונה</label>
+                    <input type="file" id="user-image" accept="image/*">
                 </div>
                 <div class="form-group">
                     <label>טלפון</label>
@@ -161,6 +161,7 @@
         <section class="admin-section">
             <h2>ניהול קורסים</h2>
             <form id="product-form">
+
                 <div class="form-group">
                     <label>שם הקורס</label>
                     <input type="text" id="product-name" required>
@@ -176,6 +177,10 @@
                 <div class="form-group">
                     <label>תכונות (מופרד בפסיקים)</label>
                     <textarea id="product-features" placeholder="תכונה 1, תכונה 2, תכונה 3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>תמונה</label>
+                    <input type="file" id="product-image" accept="image/*">
                 </div>
                 <button type="submit" class="btn">הוסף קורס</button>
             </form>
@@ -197,8 +202,8 @@
                     <textarea id="testimonial-text" required></textarea>
                 </div>
                 <div class="form-group">
-                    <label>URL תמונה</label>
-                    <input type="url" id="testimonial-image" required>
+                    <label>תמונה</label>
+                    <input type="file" id="testimonial-image" accept="image/*">
                 </div>
                 <button type="submit" class="btn">הוסף המלצה</button>
             </form>

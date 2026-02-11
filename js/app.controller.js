@@ -117,7 +117,12 @@ function renderFooter() {
     const userData = window.userData
     if (userData) {
         document.getElementById('phone-number').textContent = userData.phone
-        document.getElementById('phone-link').href = `tel:${userData.phone}`
+        // המרת מספר ישראלי לפורמט בינלאומי (972...)
+        let phone = userData.phone.replace(/[^0-9]/g, '')
+        if (phone.startsWith('0')) phone = '972' + phone.slice(1)
+        // טקסט אוטומטי לוואטסאפ
+        const msg = encodeURIComponent('שלום ד"ר ' + (userData.name || '') + ', אשמח לקבל פרטים נוספים!')
+        document.getElementById('phone-link').href = `https://wa.me/${phone}?text=${msg}`
     }
     document.getElementById('current-year').textContent = new Date().getFullYear()
 }
