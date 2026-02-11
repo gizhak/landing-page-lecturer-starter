@@ -1,10 +1,16 @@
 // Data Service - ניהול נתונים (מרצה, קורסים, המלצות סטודנטים)
+// 🔥 Now with Firebase support! Falls back to localStorage if Firebase is not configured.
+
 import { storageService } from './storage.service.js'
 import { utilService } from './util.service.js'
+import { firebaseService } from './firebase.service.js'
 
 const STORAGE_KEY_USER = 'userData'
 const STORAGE_KEY_PRODUCTS = 'productsData'
 const STORAGE_KEY_TESTIMONIALS = 'testimonialsData'
+
+// 🔥 Toggle between Firebase and localStorage
+let USE_FIREBASE = true  // Set to false to use localStorage only
 
 export const dataService = {
     // User data
@@ -27,26 +33,51 @@ export const dataService = {
 
     // Initialize
     initData,
-    resetData  // Reset all data from JSON
+    resetData,  // Reset all data from JSON
+
+    // Configuration
+    setUseFirebase,
+    isUsingFirebase
 }
 
-// Initialize data from JSON file or localStorage
+// Configuration functions
+function setUseFirebase(useFirebase) {
+    USE_FIREBASE = useFirebase
+    console.log(`🔥 Data Service: Using ${USE_FIREBASE ? 'Firebase' : 'localStorage'}`)
+}
+
+function isUsingFirebase() {
+    return USE_FIREBASE
+}
+
+// Initialize data from JSON file, Firebase, or localStorage
 async function initData() {
     try {
-        // Check if data exists in localStorage
-        const userData = utilService.loadFromStorage(STORAGE_KEY_USER)
-        const products = utilService.loadFromStorage(STORAGE_KEY_PRODUCTS)
-        const testimonials = utilService.loadFromStorage(STORAGE_KEY_TESTIMONIALS)
+        if (USE_FIREBASE) {
+            // Try Firebase first
+            try {
+                const userData = await firebaseService.getUserData()
+                const products = await firebaseService.getProducts()
+                const testimonials = await firebaseService.getTestimonials()
 
-        if (!userData || !products || !testimonials) {
-            // Load from data.json
-            const response = await fetch('data.json')
-            const data = await response.json()
-
-            // Save to localStorage
-            if (!userData) utilService.saveToStorage(STORAGE_KEY_USER, data.user)
-            if (!products) utilService.saveToStorage(STORAGE_KEY_PRODUCTS, data.products)
-            if (!testimonials) utilService.saveToStorage(STORAGE_KEY_TESTIMONIALS, data.testimonials)
+                // If Firebase has no data, initialize from data.json
+                if (!userData || products.length === 0) {
+                    console.log('🔥 Firebase is empty. Loading from data.json...')
+                    const response = await fetch('data.json')
+                    const data = await response.json()
+                    await firebaseService.initFromJSON(data)
+                    console.log('✅ Data loaded to Firebase!')
+                } else {
+                    console.log('✅ Data loaded from Firebase!')
+                }
+            } catch (firebaseError) {
+                console.warn('⚠️ Firebase error, falling back to localStorage:', firebaseError.message)
+                USE_FIREBASE = false
+                await _initLocalStorage()
+            }
+        } else {
+            // Use localStorage
+            await _initLocalStorage()
         }
     } catch (error) {
         console.error('Error initializing data:', error)
@@ -55,74 +86,228 @@ async function initData() {
     }
 }
 
-// User Data Functions
-function getUserData() {
+async function _initLocalStorage() {
+    // Check if data exists in localStorage
     const userData = utilService.loadFromStorage(STORAGE_KEY_USER)
-    return Promise.resolve(userData || _getDefaultUserData())
+    const products = utilService.loadFromStorage(STORAGE_KEY_PRODUCTS)
+    const testimonials = utilService.loadFromStorage(STORAGE_KEY_TESTIMONIALS)
+
+    if (!userData || !products || !testimonials) {
+        // Load from data.json
+        const response = await fetch('data.json')
+        const data = await response.json()
+
+        // Save to localStorage
+        if (!userData) utilService.saveToStorage(STORAGE_KEY_USER, data.user)
+        if (!products) utilService.saveToStorage(STORAGE_KEY_PRODUCTS, data.products)
+        if (!testimonials) utilService.saveToStorage(STORAGE_KEY_TESTIMONIALS, data.testimonials)
+        console.log('✅ Data loaded to localStorage!')
+    } else {
+        console.log('✅ Data loaded from localStorage!')
+    }
 }
 
-function updateUserData(userData) {
-    utilService.saveToStorage(STORAGE_KEY_USER, userData)
-    return Promise.resolve(userData)
+// User Data Functions
+async function getUserData() {
+    if (USE_FIREBASE) {
+        try {
+            const userData = await firebaseService.getUserData()
+            return userData || _getDefaultUserData()
+        } catch (error) {
+            console.error('Firebase error, using localStorage:', error)
+            const userData = utilService.loadFromStorage(STORAGE_KEY_USER)
+            return userData || _getDefaultUserData()
+        }
+    } else {
+        const userData = utilService.loadFromStorage(STORAGE_KEY_USER)
+        return userData || _getDefaultUserData()
+    }
+}
+
+async function updateUserData(userData) {
+    if (USE_FIREBASE) {
+        try {
+            userData.updatedAt = Date.now()
+            return await firebaseService.updateUserData(userData)
+        } catch (error) {
+            console.error('Firebase error, using localStorage:', error)
+            userData.updatedAt = Date.now()
+            utilService.saveToStorage(STORAGE_KEY_USER, userData)
+            return userData
+        }
+    } else {
+        userData.updatedAt = Date.now()
+        utilService.saveToStorage(STORAGE_KEY_USER, userData)
+        return userData
+    }
 }
 
 // Products CRUD Functions
-function getProducts() {
-    return storageService.query(STORAGE_KEY_PRODUCTS)
+async function getProducts() {
+    if (USE_FIREBASE) {
+        try {
+            return await firebaseService.getProducts()
+        } catch (error) {
+            console.error('Firebase error, using localStorage:', error)
+            return storageService.query(STORAGE_KEY_PRODUCTS)
+        }
+    } else {
+        return storageService.query(STORAGE_KEY_PRODUCTS)
+    }
 }
 
-function getProductById(productId) {
-    return storageService.get(STORAGE_KEY_PRODUCTS, productId)
+async function getProductById(productId) {
+    if (USE_FIREBASE) {
+        try {
+            return await firebaseService.getProductById(productId)
+        } catch (error) {
+            console.error('Firebase error, using localStorage:', error)
+            return storageService.get(STORAGE_KEY_PRODUCTS, productId)
+        }
+    } else {
+        return storageService.get(STORAGE_KEY_PRODUCTS, productId)
+    }
 }
 
-function addProduct(product) {
-    product.id = utilService.makeId()
-    product.createdAt = Date.now()
-    return storageService.post(STORAGE_KEY_PRODUCTS, product)
+async function addProduct(product) {
+    if (USE_FIREBASE) {
+        try {
+            // Firebase creates ID automatically
+            product.createdAt = Date.now()
+            return await firebaseService.addProduct(product)
+        } catch (error) {
+            console.error('Firebase error, using localStorage:', error)
+            product.id = utilService.makeId()
+            product.createdAt = Date.now()
+            return storageService.post(STORAGE_KEY_PRODUCTS, product)
+        }
+    } else {
+        product.id = utilService.makeId()
+        product.createdAt = Date.now()
+        return storageService.post(STORAGE_KEY_PRODUCTS, product)
+    }
 }
 
-function updateProduct(product) {
-    product.updatedAt = Date.now()
-    return storageService.put(STORAGE_KEY_PRODUCTS, product)
+async function updateProduct(product) {
+    if (USE_FIREBASE) {
+        try {
+            product.updatedAt = Date.now()
+            return await firebaseService.updateProduct(product)
+        } catch (error) {
+            console.error('Firebase error, using localStorage:', error)
+            product.updatedAt = Date.now()
+            return storageService.put(STORAGE_KEY_PRODUCTS, product)
+        }
+    } else {
+        product.updatedAt = Date.now()
+        return storageService.put(STORAGE_KEY_PRODUCTS, product)
+    }
 }
 
-function removeProduct(productId) {
-    return storageService.remove(STORAGE_KEY_PRODUCTS, productId)
+async function removeProduct(productId) {
+    if (USE_FIREBASE) {
+        try {
+            await firebaseService.removeProduct(productId)
+            return productId
+        } catch (error) {
+            console.error('Firebase error, using localStorage:', error)
+            return storageService.remove(STORAGE_KEY_PRODUCTS, productId)
+        }
+    } else {
+        return storageService.remove(STORAGE_KEY_PRODUCTS, productId)
+    }
 }
 
 // Testimonials CRUD Functions
-function getTestimonials() {
-    return storageService.query(STORAGE_KEY_TESTIMONIALS)
+async function getTestimonials() {
+    if (USE_FIREBASE) {
+        try {
+            return await firebaseService.getTestimonials()
+        } catch (error) {
+            console.error('Firebase error, using localStorage:', error)
+            return storageService.query(STORAGE_KEY_TESTIMONIALS)
+        }
+    } else {
+        return storageService.query(STORAGE_KEY_TESTIMONIALS)
+    }
 }
 
-function getTestimonialById(testimonialId) {
-    return storageService.get(STORAGE_KEY_TESTIMONIALS, testimonialId)
+async function getTestimonialById(testimonialId) {
+    if (USE_FIREBASE) {
+        try {
+            return await firebaseService.getTestimonialById(testimonialId)
+        } catch (error) {
+            console.error('Firebase error, using localStorage:', error)
+            return storageService.get(STORAGE_KEY_TESTIMONIALS, testimonialId)
+        }
+    } else {
+        return storageService.get(STORAGE_KEY_TESTIMONIALS, testimonialId)
+    }
 }
 
-function addTestimonial(testimonial) {
-    testimonial.id = utilService.makeId()
-    testimonial.createdAt = Date.now()
-    return storageService.post(STORAGE_KEY_TESTIMONIALS, testimonial)
+async function addTestimonial(testimonial) {
+    if (USE_FIREBASE) {
+        try {
+            // Firebase creates ID automatically
+            testimonial.createdAt = Date.now()
+            return await firebaseService.addTestimonial(testimonial)
+        } catch (error) {
+            console.error('Firebase error, using localStorage:', error)
+            testimonial.id = utilService.makeId()
+            testimonial.createdAt = Date.now()
+            return storageService.post(STORAGE_KEY_TESTIMONIALS, testimonial)
+        }
+    } else {
+        testimonial.id = utilService.makeId()
+        testimonial.createdAt = Date.now()
+        return storageService.post(STORAGE_KEY_TESTIMONIALS, testimonial)
+    }
 }
 
-function updateTestimonial(testimonial) {
-    testimonial.updatedAt = Date.now()
-    return storageService.put(STORAGE_KEY_TESTIMONIALS, testimonial)
+async function updateTestimonial(testimonial) {
+    if (USE_FIREBASE) {
+        try {
+            testimonial.updatedAt = Date.now()
+            return await firebaseService.updateTestimonial(testimonial)
+        } catch (error) {
+            console.error('Firebase error, using localStorage:', error)
+            testimonial.updatedAt = Date.now()
+            return storageService.put(STORAGE_KEY_TESTIMONIALS, testimonial)
+        }
+    } else {
+        testimonial.updatedAt = Date.now()
+        return storageService.put(STORAGE_KEY_TESTIMONIALS, testimonial)
+    }
 }
 
-function removeTestimonial(testimonialId) {
-    return storageService.remove(STORAGE_KEY_TESTIMONIALS, testimonialId)
+async function removeTestimonial(testimonialId) {
+    if (USE_FIREBASE) {
+        try {
+            await firebaseService.removeTestimonial(testimonialId)
+            return testimonialId
+        } catch (error) {
+            console.error('Firebase error, using localStorage:', error)
+            return storageService.remove(STORAGE_KEY_TESTIMONIALS, testimonialId)
+        }
+    } else {
+        return storageService.remove(STORAGE_KEY_TESTIMONIALS, testimonialId)
+    }
 }
 
 // Reset all data - useful for debugging
-function resetData() {
-    localStorage.removeItem(STORAGE_KEY_USER)
-    localStorage.removeItem(STORAGE_KEY_PRODUCTS)
-    localStorage.removeItem(STORAGE_KEY_TESTIMONIALS)
-    return initData()
+async function resetData() {
+    if (USE_FIREBASE) {
+        console.log('🔥 Resetting Firebase data...')
+        // Firebase will be reset when initData loads from data.json
+        return initData()
+    } else {
+        localStorage.removeItem(STORAGE_KEY_USER)
+        localStorage.removeItem(STORAGE_KEY_PRODUCTS)
+        localStorage.removeItem(STORAGE_KEY_TESTIMONIALS)
+        return initData()
+    }
 }
 
-// 
 // Private Functions
 function _setDefaultData() {
     const defaultUser = _getDefaultUserData()
