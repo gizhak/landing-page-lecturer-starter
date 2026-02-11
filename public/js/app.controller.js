@@ -86,14 +86,14 @@ async function renderProducts() {
         const productsGrid = document.getElementById('products-grid')
 
         const strHTML = products.map(product => `
-            <div class="product-card" data-product-id="${product.id}" onclick="app.onProductClick('${product.id}')">
+            <div class="product-card" data-product-id="${product.id}">
                 <h3>${product.name}</h3>
                 <p class="product-description">${product.description}</p>
                 <div class="product-price">${product.price}</div>
                 <ul class="product-features">
                     ${product.features.map(feature => `<li>${feature}</li>`).join('')}
                 </ul>
-                <button class="product-button" data-i18n="courses.button">${i18nService.translate('courses.button')}</button>
+                <button class="product-button" onclick="app.onProductClick('${product.id}')" data-i18n="courses.button">${i18nService.translate('courses.button')}</button>
             </div>
         `).join('')
 

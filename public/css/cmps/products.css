@@ -86,7 +86,6 @@
     padding: 2rem;
     box-shadow: var(--shadow-md);
     transition: all 0.3s ease;
-    cursor: pointer;
     display: flex;
     flex-direction: column;
     border: 1px solid transparent;
