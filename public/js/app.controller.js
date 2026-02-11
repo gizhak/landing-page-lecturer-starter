@@ -64,6 +64,10 @@ async function renderUserData() {
         document.getElementById('user-description').textContent = userData.description
         document.title = userData.brandName + ' - דף נחיתה'
 
+        // About section
+        document.getElementById('about-intro').textContent = userData.aboutIntro || ''
+        document.getElementById('about-details').textContent = userData.aboutDetails || ''
+
         // Store phone for later use
         window.userData = userData
     } catch (err) {

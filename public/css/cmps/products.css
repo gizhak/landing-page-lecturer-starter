@@ -13,9 +13,12 @@
 }
 
 .products-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    display: flex;
     gap: 2rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding-bottom: 1rem;
+    -webkit-overflow-scrolling: touch;
 }
 
 .product-card {
@@ -28,6 +31,9 @@
     display: flex;
     flex-direction: column;
     border: 1px solid transparent;
+    min-width: 280px;
+    flex-shrink: 0;
+    scroll-snap-align: start;
 }
 
 [data-theme="dark"] .product-card {
@@ -106,8 +112,8 @@
         font-size: 2rem;
     }
 
-    .products-grid {
-        grid-template-columns: 1fr;
+    .product-card {
+        min-width: 260px;
     }
 }
 

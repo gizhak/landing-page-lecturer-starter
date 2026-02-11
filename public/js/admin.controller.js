@@ -64,6 +64,8 @@ async function loadUserData() {
         document.getElementById('user-description').value = userData.description
         // אסור לשים value ב-input[type=file]!
         document.getElementById('user-phone').value = userData.phone
+        document.getElementById('about-intro').value = userData.aboutIntro || ''
+        document.getElementById('about-details').value = userData.aboutDetails || ''
 
         // הצג preview של התמונה הנוכחית (אם יש)
         let preview = document.getElementById('user-image-preview')
@@ -101,7 +103,9 @@ async function onSaveUser(ev) {
             title: document.getElementById('user-title').value,
             description: document.getElementById('user-description').value,
             image: imageUrl || '',
-            phone
+            phone,
+            aboutIntro: document.getElementById('about-intro').value,
+            aboutDetails: document.getElementById('about-details').value
         }
         await dataService.updateUserData(userData)
         flashMsg('פרטי המשתמש עודכנו בהצלחה!')

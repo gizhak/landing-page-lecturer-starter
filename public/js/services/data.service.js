@@ -326,7 +326,9 @@ function _getDefaultUserData() {
         title: "התפקיד המקצועי שלך",
         description: "תיאור מקצועי שלך. הסבר מי אתה ומה אתה עושה.",
         image: "https://via.placeholder.com/300",
-        phone: "050-123-4567"
+        phone: "050-123-4567",
+        aboutIntro: "כתוב כאן על הרקע המקצועי והאקדמי שלך.",
+        aboutDetails: "ספר על השכלתך, הקורסים שאתה מלמד, ומה הופך את שיטת ההוראה שלך לייחודית."
     }
 }
 

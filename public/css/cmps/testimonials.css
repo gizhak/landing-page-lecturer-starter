@@ -13,9 +13,12 @@
 }
 
 .testimonials-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    display: flex;
     gap: 2rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding-bottom: 1rem;
+    -webkit-overflow-scrolling: touch;
 }
 
 .testimonial-card {
@@ -26,6 +29,9 @@
     box-shadow: var(--shadow-md);
     transition: all 0.3s ease;
     border: 1px solid transparent;
+    min-width: 280px;
+    flex-shrink: 0;
+    scroll-snap-align: start;
 }
 
 [data-theme="dark"] .testimonial-card {
@@ -71,7 +77,7 @@
         font-size: 2rem;
     }
 
-    .testimonials-grid {
-        grid-template-columns: 1fr;
+    .testimonial-card {
+        min-width: 260px;
     }
 }
