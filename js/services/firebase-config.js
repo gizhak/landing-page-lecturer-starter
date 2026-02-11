@@ -1,13 +1,14 @@
 // Firebase Configuration
-// TODO: Replace with your Firebase project config from Firebase Console
+// ✅ Connected to Firebase project: lecturer-landing-page
 
 const firebaseConfig = {
-    apiKey: "YOUR_API_KEY_HERE",
-    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_PROJECT_ID.appspot.com",
-    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-    appId: "YOUR_APP_ID",
+    apiKey: "AIzaSyCYz7zp7MbI7qrKS0zh_d8Go0D4XC0V3vPI",
+    authDomain: "lecturer-landing-page.firebaseapp.com",
+    projectId: "lecturer-landing-page",
+    storageBucket: "lecturer-landing-page.firebasestorage.app",
+    messagingSenderId: "38187814284",
+    appId: "1:38187814284:web:e631357674c4b6a6ddfca4a",
+    measurementId: "G-XZJ09JHQBK",
 
     // 🎯 Client ID - Unique identifier for each landing page client
     // Change this for each client (e.g., "yossi-cohen", "sara-levy", "danny-golan")
