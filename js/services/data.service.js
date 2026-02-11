@@ -128,7 +128,7 @@ async function updateUserData(userData) {
     if (USE_FIREBASE) {
         try {
             userData.updatedAt = Date.now()
-            return await firebaseService.updateUserData(userData)
+            return await firebaseService.saveUserData(userData)
         } catch (error) {
             console.error('Firebase error, using localStorage:', error)
             userData.updatedAt = Date.now()
