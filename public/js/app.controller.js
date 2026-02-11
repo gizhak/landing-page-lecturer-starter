@@ -3,7 +3,11 @@ import { utilService } from './services/util.service.js'
 import { dataService } from './services/data.service.js'
 import { i18nService } from './services/i18n.service.js'
 
-// To make things easier in this project structure 
+// Default testimonial image - change this URL to set the default client photo
+// שנה את הכתובת הזו כדי לקבוע תמונת ברירת מחדל ללקוחות
+const DEFAULT_TESTIMONIAL_IMAGE = 'https://via.placeholder.com/100x100?text=👤'
+
+// To make things easier in this project structure
 // functions that are called from DOM are defined on a global app object
 window.app = {
     onInit,
@@ -50,6 +54,7 @@ async function renderApp() {
     await renderProducts()
     await renderTestimonials()
     renderFooter()
+    initCarousels()
 }
 
 async function renderUserData() {
@@ -105,7 +110,7 @@ async function renderTestimonials() {
 
         const strHTML = testimonials.map(testimonial => `
             <div class="testimonial-card">
-                <img src="${testimonial.image}" alt="${testimonial.name}">
+                <img src="${testimonial.image || DEFAULT_TESTIMONIAL_IMAGE}" alt="${testimonial.name}" onerror="this.src='${DEFAULT_TESTIMONIAL_IMAGE}'">
                 <p class="testimonial-text">"${testimonial.text}"</p>
                 <p class="testimonial-name">${testimonial.name}</p>
             </div>
@@ -247,6 +252,70 @@ async function onRemoveTestimonial(testimonialId) {
 async function onEditTestimonial(testimonialId) {
     // This function can be expanded for admin panel
     console.log('Edit testimonial:', testimonialId)
+}
+
+// Carousel Functions
+function initCarousels() {
+    document.querySelectorAll('.carousel-arrow').forEach(arrow => {
+        arrow.addEventListener('click', () => {
+            const targetId = arrow.dataset.target
+            const grid = document.getElementById(targetId)
+            if (!grid) return
+            const cardWidth = grid.querySelector(':first-child')?.offsetWidth || 320
+            const scrollAmount = cardWidth + 32 // card width + gap
+            // In RTL, left arrow = scroll right (next), right arrow = scroll left (prev)
+            if (arrow.classList.contains('carousel-arrow-left')) {
+                grid.scrollBy({ left: -scrollAmount, behavior: 'smooth' })
+            } else {
+                grid.scrollBy({ left: scrollAmount, behavior: 'smooth' })
+            }
+        })
+    })
+
+    // Update arrow visibility
+    updateCarouselArrows('products-grid')
+    updateCarouselArrows('testimonials-grid')
+
+    // Listen for scroll to update arrows
+    const productsGrid = document.getElementById('products-grid')
+    const testimonialsGrid = document.getElementById('testimonials-grid')
+    if (productsGrid) productsGrid.addEventListener('scroll', () => updateCarouselArrows('products-grid'))
+    if (testimonialsGrid) testimonialsGrid.addEventListener('scroll', () => updateCarouselArrows('testimonials-grid'))
+
+    // Update on resize
+    window.addEventListener('resize', () => {
+        updateCarouselArrows('products-grid')
+        updateCarouselArrows('testimonials-grid')
+    })
+}
+
+function updateCarouselArrows(gridId) {
+    const grid = document.getElementById(gridId)
+    if (!grid) return
+    const wrapper = grid.closest('.carousel-wrapper')
+    if (!wrapper) return
+
+    const arrows = wrapper.querySelectorAll('.carousel-arrow')
+    // If all content fits, hide both arrows
+    if (grid.scrollWidth <= grid.clientWidth + 5) {
+        arrows.forEach(a => a.classList.add('hidden'))
+        return
+    }
+
+    arrows.forEach(arrow => {
+        arrow.classList.remove('hidden')
+        // RTL: scrollLeft is negative in RTL
+        const scrollLeft = Math.abs(grid.scrollLeft)
+        const maxScroll = grid.scrollWidth - grid.clientWidth
+
+        if (arrow.classList.contains('carousel-arrow-right')) {
+            // Right arrow (scroll towards start in RTL)
+            arrow.classList.toggle('hidden', scrollLeft >= maxScroll - 5)
+        } else {
+            // Left arrow (scroll towards end in RTL)
+            arrow.classList.toggle('hidden', scrollLeft <= 5)
+        }
+    })
 }
 
 // Utility Functions
