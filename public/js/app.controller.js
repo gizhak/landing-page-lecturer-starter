@@ -296,8 +296,11 @@ function updateCarouselArrows(gridId) {
     if (!wrapper) return
 
     const arrows = wrapper.querySelectorAll('.carousel-arrow')
+    const hasOverflow = grid.scrollWidth > grid.clientWidth + 5
+    grid.classList.toggle('has-overflow', hasOverflow)
+
     // If all content fits, hide both arrows
-    if (grid.scrollWidth <= grid.clientWidth + 5) {
+    if (!hasOverflow) {
         arrows.forEach(a => a.classList.add('hidden'))
         return
     }

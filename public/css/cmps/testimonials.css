@@ -14,6 +14,7 @@
 
 .testimonials-grid {
     display: flex;
+    justify-content: center;
     gap: 2rem;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
@@ -23,6 +24,10 @@
     /* Hide scrollbar */
     scrollbar-width: none;
     -ms-overflow-style: none;
+}
+
+.testimonials-grid.has-overflow {
+    justify-content: flex-start;
 }
 
 .testimonials-grid::-webkit-scrollbar {
@@ -37,10 +42,13 @@
     box-shadow: var(--shadow-md);
     transition: all 0.3s ease;
     border: 1px solid transparent;
+    width: 320px;
     min-width: 320px;
     max-width: 320px;
     flex-shrink: 0;
     scroll-snap-align: center;
+    overflow: hidden;
+    word-wrap: break-word;
 }
 
 [data-theme="dark"] .testimonial-card {
