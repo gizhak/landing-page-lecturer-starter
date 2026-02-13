@@ -9,7 +9,7 @@ const DEFAULT_TESTIMONIAL_IMAGE = 'https://via.placeholder.com/100x100?text=👤
 
 // מספר הטלפון של המפתח - שנה למספר שלך
 // Developer phone number for "רוצים גם?" link
-const DEV_PHONE = '0507402462'
+const DEV_PHONE = '+972507402462'
 
 // To make things easier in this project structure
 // functions that are called from DOM are defined on a global app object
@@ -34,8 +34,10 @@ async function onInit() {
         await dataService.initData()
         await renderApp()
         setupEventListeners()
+        document.body.classList.add('ready')
     } catch (err) {
         console.error('Error initializing app:', err)
+        document.body.classList.add('ready')
         const msg = i18nService.getCurrentLanguage() === 'he'
             ? 'שגיאה בטעינת הנתונים'
             : 'Error loading data'
@@ -66,8 +68,10 @@ async function renderUserData() {
         const userData = await dataService.getUserData()
 
         document.getElementById('brand-name').textContent = userData.brandName
-        document.getElementById('user-image').src = userData.image
-        document.getElementById('user-image').alt = userData.name
+        const userImage = document.getElementById('user-image')
+        userImage.alt = userData.name
+        userImage.onload = () => userImage.classList.add('loaded')
+        userImage.src = userData.image
         document.getElementById('user-name').textContent = userData.name
         document.getElementById('user-title').textContent = userData.title
         document.getElementById('user-description').textContent = userData.description
@@ -76,6 +80,12 @@ async function renderUserData() {
         // About section
         document.getElementById('about-intro').textContent = userData.aboutIntro || ''
         document.getElementById('about-details').textContent = userData.aboutDetails || ''
+
+        // Custom section titles
+        if (userData.titleAbout) document.querySelector('#about h2[data-i18n]').textContent = userData.titleAbout
+        if (userData.titleCourses) document.querySelector('#products h2[data-i18n]').textContent = userData.titleCourses
+        if (userData.titleTestimonials) document.querySelector('#testimonials h2[data-i18n]').textContent = userData.titleTestimonials
+        if (userData.titleContact) document.querySelector('.footer-contact h3[data-i18n]').textContent = userData.titleContact
 
         // Store phone for later use
         window.userData = userData
@@ -299,6 +309,9 @@ function initCarousels() {
         updateCarouselArrows('products-grid')
         updateCarouselArrows('testimonials-grid')
     })
+
+    // Auto-scroll testimonials carousel
+    initTestimonialsAutoScroll()
 }
 
 function updateCarouselArrows(gridId) {
@@ -324,13 +337,57 @@ function updateCarouselArrows(gridId) {
         const maxScroll = grid.scrollWidth - grid.clientWidth
 
         if (arrow.classList.contains('carousel-arrow-right')) {
-            // Right arrow (scroll towards start in RTL)
-            arrow.classList.toggle('hidden', scrollLeft >= maxScroll - 5)
-        } else {
-            // Left arrow (scroll towards end in RTL)
+            // Right arrow: hide when at start (nothing to go back to)
             arrow.classList.toggle('hidden', scrollLeft <= 5)
+        } else {
+            // Left arrow: hide when at end (nothing more to see)
+            arrow.classList.toggle('hidden', scrollLeft >= maxScroll - 5)
         }
     })
+}
+
+// Testimonials Auto-Scroll (mobile only)
+function initTestimonialsAutoScroll() {
+    const grid = document.getElementById('testimonials-grid')
+    if (!grid) return
+
+    let autoScrollInterval = null
+
+    function isMobile() {
+        return window.innerWidth <= 768
+    }
+
+    function startAutoScroll() {
+        if (autoScrollInterval || !isMobile()) return
+        autoScrollInterval = setInterval(() => {
+            const maxScroll = grid.scrollWidth - grid.clientWidth
+            const scrollLeft = Math.abs(grid.scrollLeft)
+
+            if (scrollLeft >= maxScroll - 5) {
+                grid.scrollTo({ left: 0, behavior: 'smooth' })
+            } else {
+                const cardWidth = grid.querySelector(':first-child')?.offsetWidth || 320
+                grid.scrollBy({ left: -(cardWidth + 32), behavior: 'smooth' })
+            }
+        }, 10000)
+    }
+
+    function stopAutoScroll() {
+        clearInterval(autoScrollInterval)
+        autoScrollInterval = null
+    }
+
+    // Pause on touch
+    grid.addEventListener('touchstart', stopAutoScroll)
+    grid.addEventListener('touchend', () => setTimeout(startAutoScroll, 3000))
+
+    // Start/stop on resize (mobile <-> desktop)
+    window.addEventListener('resize', () => {
+        if (isMobile()) startAutoScroll()
+        else stopAutoScroll()
+    })
+
+    startAutoScroll()
 }
 
 // Utility Functions

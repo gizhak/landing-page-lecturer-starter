@@ -11,6 +11,12 @@ body {
     color: var(--clr-text);
     background: var(--clr-bg);
     transition: background-color 0.3s ease, color 0.3s ease;
+    opacity: 0;
+}
+
+body.ready {
+    opacity: 1;
+    transition: opacity 0.3s ease, background-color 0.3s ease, color 0.3s ease;
 }
 
 .hidden {

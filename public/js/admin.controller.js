@@ -20,8 +20,10 @@ async function onInit() {
         await loadProducts()
         await loadTestimonials()
         setupEventListeners()
+        document.body.classList.add('ready')
     } catch (err) {
         console.error('Error initializing admin:', err)
+        document.body.classList.add('ready')
         flashMsg('שגיאה בטעינת הנתונים')
     }
 }
@@ -67,6 +69,12 @@ async function loadUserData() {
         document.getElementById('about-intro').value = userData.aboutIntro || ''
         document.getElementById('about-details').value = userData.aboutDetails || ''
 
+        // Section titles
+        document.getElementById('title-about').value = userData.titleAbout || ''
+        document.getElementById('title-courses').value = userData.titleCourses || ''
+        document.getElementById('title-testimonials').value = userData.titleTestimonials || ''
+        document.getElementById('title-contact').value = userData.titleContact || ''
+
         // הצג preview של התמונה הנוכחית (אם יש)
         let preview = document.getElementById('user-image-preview')
         if (!preview) {
@@ -89,9 +97,11 @@ async function onSaveUser(ev) {
     ev.preventDefault()
 
     try {
+        // שמירת התמונה הקיימת אם לא נבחרה תמונה חדשה
+        const existingData = await dataService.getUserData()
         const fileInput = document.getElementById('user-image')
         const file = fileInput.files[0]
-        let imageUrl = null
+        let imageUrl = existingData.image || ''
         if (file) {
             imageUrl = await uploadService.uploadImg(file)
         }
@@ -102,10 +112,14 @@ async function onSaveUser(ev) {
             name: document.getElementById('user-name').value,
             title: document.getElementById('user-title').value,
             description: document.getElementById('user-description').value,
-            image: imageUrl || '',
+            image: imageUrl,
             phone,
             aboutIntro: document.getElementById('about-intro').value,
-            aboutDetails: document.getElementById('about-details').value
+            aboutDetails: document.getElementById('about-details').value,
+            titleAbout: document.getElementById('title-about').value,
+            titleCourses: document.getElementById('title-courses').value,
+            titleTestimonials: document.getElementById('title-testimonials').value,
+            titleContact: document.getElementById('title-contact').value
         }
         await dataService.updateUserData(userData)
         flashMsg('פרטי המשתמש עודכנו בהצלחה!')

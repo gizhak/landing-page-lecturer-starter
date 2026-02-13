@@ -19,7 +19,7 @@
     overflow-x: auto;
     scroll-snap-type: x mandatory;
     scroll-behavior: smooth;
-    padding: 0.5rem 0;
+    padding: 0.5rem 2.5rem;
     -webkit-overflow-scrolling: touch;
     touch-action: pan-x;
     /* Hide scrollbar */
@@ -99,6 +99,7 @@
         justify-content: flex-start;
         scroll-snap-type: x proximity;
         padding: 0.5rem 1rem;
+        touch-action: auto;
     }
 
     .testimonial-card {
