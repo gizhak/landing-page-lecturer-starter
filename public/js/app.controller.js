@@ -369,7 +369,7 @@ function initTestimonialsAutoScroll() {
                 const cardWidth = grid.querySelector(':first-child')?.offsetWidth || 320
                 grid.scrollBy({ left: -(cardWidth + 32), behavior: 'smooth' })
             }
-        }, 10000)
+        }, 3000)
     }
 
     function stopAutoScroll() {
